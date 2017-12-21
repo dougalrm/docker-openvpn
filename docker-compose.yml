@@ -1,0 +1,18 @@
+version: '2.1'
+
+services:
+  openvpn:
+    image: openvpn-dg
+    container_name: ovpn
+    ports:
+     - 1194:1194/udp
+    restart: always
+    volumes:
+     - ./openvpn-data/conf:/etc/openvpn
+     - ./log/openvpn.log:/var/log/openvpn.log
+     - ./log/openvpn-status.log:/var/log/openvpn-status.log
+    environment:
+      - VIRTUAL_HOST=v.trilogyphoto.co.uk
+      - VIRTUAL_HOST=1194
+    cap_add:
+     - NET_ADMIN

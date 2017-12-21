@@ -142,11 +142,11 @@ if [ -z "${EASYRSA_PKI:-}" ]; then
     export EASYRSA_PKI="$OPENVPN/pki"
 fi
 
-OVPN_AUTH=''
-OVPN_CIPHER=''
+OVPN_AUTH='SHA384'
+OVPN_CIPHER='AES-256-CBC'
 OVPN_CLIENT_TO_CLIENT=''
 OVPN_CN=''
-OVPN_COMP_LZO=0
+OVPN_COMP_LZO=1
 OVPN_DEFROUTE=1
 OVPN_DEVICE="tun"
 OVPN_DEVICEN=0
@@ -166,7 +166,7 @@ OVPN_PUSH=()
 OVPN_ROUTES=()
 OVPN_SERVER=192.168.255.0/24
 OVPN_SERVER_URL=''
-OVPN_TLS_CIPHER=''
+OVPN_TLS_CIPHER='TLS-DHE-RSA-WITH-AES-256-CBC-SHA256'
 
 # Import existing configuration if present
 [ -r "$OVPN_ENV" ] && source "$OVPN_ENV"
@@ -319,14 +319,19 @@ fi
 
 cat > "$conf" <<EOF
 server $(getroute $OVPN_SERVER)
-verb 3
+
+verb 6
+
 key $EASYRSA_PKI/private/${OVPN_CN}.key
 ca $EASYRSA_PKI/ca.crt
 cert $EASYRSA_PKI/issued/${OVPN_CN}.crt
 dh $EASYRSA_PKI/dh.pem
 tls-auth $EASYRSA_PKI/ta.key
+
 key-direction 0
+
 keepalive $OVPN_KEEPALIVE
+
 persist-key
 persist-tun
 
@@ -334,7 +339,17 @@ proto $OVPN_PROTO
 # Rely on Docker to do port mapping, internally always 1194
 port 1194
 dev $OVPN_DEVICE$OVPN_DEVICEN
-status /tmp/openvpn-status.log
+
+status /var/log/openvpn-status.log
+log /var/log/openvpn.log
+
+#resolv-retry infinite
+
+#mute-replay-warnings
+
+#cipher AES-256-CBC
+#auth SHA384
+#tls-cipher TLS-DHE-RSA-WITH-AES-256-CBC-SHA256
 
 user nobody
 group nogroup
@@ -404,4 +419,4 @@ if diff -q "${bak:-}" "$conf" 2>/dev/null; then
     rm -fv "$bak"
 fi
 
-echo "Successfully generated config"
+echo "Successfully LOLOLOLOLLOL  generated config"

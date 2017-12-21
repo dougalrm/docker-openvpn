@@ -33,7 +33,6 @@ get_client_config() {
     mode="$1"
     echo "
 client
-nobind
 dev $OVPN_DEVICE
 remote-cert-tls server
 
